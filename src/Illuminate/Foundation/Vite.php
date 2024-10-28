@@ -14,132 +14,138 @@ class Vite implements Htmlable
     use Macroable;
 
     /**
-     * The Content Security Policy nonce to apply to all generated tags.
+     * 内容安全策略 nonce 应用于所有生成的标记。
      *
      * @var string|null
      */
     protected $nonce;
 
     /**
-     * The key to check for integrity hashes within the manifest.
+     * 用于检查清单中完整性哈希的键。
      *
      * @var string|false
      */
     protected $integrityKey = 'integrity';
 
     /**
-     * The configured entry points.
+     * 配置的入口点。
      *
      * @var array
      */
     protected $entryPoints = [];
 
     /**
-     * The path to the "hot" file.
+     * “hot” 文件的路径。
      *
      * @var string|null
      */
     protected $hotFile;
 
     /**
-     * The path to the build directory.
+     * 生成目录的路径。
      *
      * @var string
      */
     protected $buildDirectory = 'build';
 
     /**
-     * The name of the manifest file.
+     * 清单文件的名称。
      *
      * @var string
      */
     protected $manifestFilename = 'manifest.json';
 
     /**
-     * The custom asset path resolver.
+     * 自定义资产路径解析程序。
      *
      * @var callable|null
      */
     protected $assetPathResolver = null;
 
     /**
-     * The script tag attributes resolvers.
+     * 脚本标记属性解析程序。
      *
      * @var array
      */
     protected $scriptTagAttributesResolvers = [];
 
     /**
-     * The style tag attributes resolvers.
+     * 样式标记属性解析程序。
      *
      * @var array
      */
     protected $styleTagAttributesResolvers = [];
 
     /**
-     * The preload tag attributes resolvers.
+     * preload 标签属性 resolvers。
      *
      * @var array
      */
     protected $preloadTagAttributesResolvers = [];
 
     /**
-     * The preloaded assets.
+     * 预加载的资产。
      *
      * @var array
      */
     protected $preloadedAssets = [];
 
     /**
-     * The cached manifest files.
+     * 缓存的清单文件。
      *
      * @var array
      */
     protected static $manifests = [];
 
     /**
-     * The prefetching strategy to use.
+     * 要使用的预取策略。
      *
      * @var null|'waterfall'|'aggressive'
      */
     protected $prefetchStrategy = null;
 
     /**
-     * The number of assets to load concurrently when using the "waterfall" strategy.
+     * 使用 “waterfall” 策略时要同时加载的资产数量。
      *
      * @var int
      */
     protected $prefetchConcurrently = 3;
 
     /**
-     * The name of the event that should trigger prefetching. The event must be dispatched on the `window`.
-     *
+     * 应触发预取的事件的名称。该事件必须在 'window' 上调度。     
+     * 
      * @var string
      */
     protected $prefetchEvent = 'load';
 
     /**
-     * Get the preloaded assets.
+     * 获取预加载的资产。
      *
      * @return array
      */
     public function preloadedAssets()
     {
+        echo "<br />-------------------------preloadedAssets-------------------------<br />";
+        var_dump($this->preloadedAssets);
+        echo "<br />-------------------------preloadedAssets-------------------------<br />";
         return $this->preloadedAssets;
     }
 
     /**
-     * Get the Content Security Policy nonce applied to all generated tags.
+     * 获取应用于所有生成的标记的内容安全策略 nonce。
      *
      * @return string|null
      */
     public function cspNonce()
     {
+        echo "<br />-------------------------cspNonce-------------------------<br />";
+        var_dump($this->nonce);
+        echo "<br />-------------------------cspNonce-------------------------<br />";
         return $this->nonce;
     }
 
     /**
-     * Generate or set a Content Security Policy nonce to apply to all generated tags.
+     * 生成或设置内容安全策略 nonce 以应用于所有生成的标记。
      *
      * @param  string|null  $nonce
      * @return string
@@ -150,7 +156,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Use the given key to detect integrity hashes in the manifest.
+     * 使用给定的键检测清单中的完整性哈希。
      *
      * @param  string|false  $key
      * @return $this
@@ -216,7 +222,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the Vite "hot" file path.
+     * 获取 Vite "hot" 文件路径。
      *
      * @return string
      */
@@ -226,7 +232,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Set the Vite "hot" file path.
+     * 设置 Vite "hot" 文件路径。
      *
      * @param  string  $path
      * @return $this
@@ -239,7 +245,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Set the Vite build directory.
+     * 设置 Vite 构建目录。
      *
      * @param  string  $path
      * @return $this
@@ -252,7 +258,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Use the given callback to resolve attributes for script tags.
+     * 使用给定的回调来解析脚本标签的属性。
      *
      * @param  (callable(string, string, ?array, ?array): array)|array  $attributes
      * @return $this
@@ -260,7 +266,7 @@ class Vite implements Htmlable
     public function useScriptTagAttributes($attributes)
     {
         if (! is_callable($attributes)) {
-            $attributes = fn () => $attributes;
+            $attributes = fn() => $attributes;
         }
 
         $this->scriptTagAttributesResolvers[] = $attributes;
@@ -269,7 +275,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Use the given callback to resolve attributes for style tags.
+     * 使用给定的回调来解析样式标签的属性。
      *
      * @param  (callable(string, string, ?array, ?array): array)|array  $attributes
      * @return $this
@@ -277,7 +283,7 @@ class Vite implements Htmlable
     public function useStyleTagAttributes($attributes)
     {
         if (! is_callable($attributes)) {
-            $attributes = fn () => $attributes;
+            $attributes = fn() => $attributes;
         }
 
         $this->styleTagAttributesResolvers[] = $attributes;
@@ -286,7 +292,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Use the given callback to resolve attributes for preload tags.
+     * 使用给定的回调来解析预加载标签的属性。
      *
      * @param  (callable(string, string, ?array, ?array): (array|false))|array|false  $attributes
      * @return $this
@@ -294,7 +300,7 @@ class Vite implements Htmlable
     public function usePreloadTagAttributes($attributes)
     {
         if (! is_callable($attributes)) {
-            $attributes = fn () => $attributes;
+            $attributes = fn() => $attributes;
         }
 
         $this->preloadTagAttributesResolvers[] = $attributes;
@@ -303,7 +309,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Eagerly prefetch assets.
+     * 预先获取资源。
      *
      * @param  int|null  $concurrency
      * @param  string  $event
@@ -319,7 +325,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Use the "waterfall" prefetching strategy.
+     * 使用 "waterfall" 预先获取策略。
      *
      * @return $this
      */
@@ -331,7 +337,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Use the "aggressive" prefetching strategy.
+     * 使用 "aggressive" 预先获取策略。
      *
      * @return $this
      */
@@ -341,7 +347,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Set the prefetching strategy.
+     * 设置预先获取策略。
      *
      * @param  'waterfall'|'aggressive'|null  $strategy
      * @param  array  $config
@@ -359,7 +365,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Generate Vite tags for an entrypoint.
+     * 为入口点生成 Vite 标签。
      *
      * @param  string|string[]  $entrypoints
      * @param  string|null  $buildDirectory
@@ -376,7 +382,7 @@ class Vite implements Htmlable
             return new HtmlString(
                 $entrypoints
                     ->prepend('@vite/client')
-                    ->map(fn ($entrypoint) => $this->makeTagForChunk($entrypoint, $this->hotAsset($entrypoint), null, null))
+                    ->map(fn($entrypoint) => $this->makeTagForChunk($entrypoint, $this->hotAsset($entrypoint), null, null))
                     ->join('')
             );
         }
@@ -449,13 +455,13 @@ class Vite implements Htmlable
             }
         }
 
-        [$stylesheets, $scripts] = $tags->unique()->partition(fn ($tag) => str_starts_with($tag, '<link'));
+        [$stylesheets, $scripts] = $tags->unique()->partition(fn($tag) => str_starts_with($tag, '<link'));
 
         $preloads = $preloads->unique()
-            ->sortByDesc(fn ($args) => $this->isCssPath($args[1]))
-            ->map(fn ($args) => $this->makePreloadTagForChunk(...$args));
+            ->sortByDesc(fn($args) => $this->isCssPath($args[1]))
+            ->map(fn($args) => $this->makePreloadTagForChunk(...$args));
 
-        $base = $preloads->join('').$stylesheets->join('').$scripts->join('');
+        $base = $preloads->join('') . $stylesheets->join('') . $scripts->join('');
 
         if ($this->prefetchStrategy === null || $this->isRunningHot()) {
             return new HtmlString($base);
@@ -464,9 +470,9 @@ class Vite implements Htmlable
         $discoveredImports = [];
 
         return collect($entrypoints)
-            ->flatMap(fn ($entrypoint) => collect($manifest[$entrypoint]['dynamicImports'] ?? [])
-                ->map(fn ($import) => $manifest[$import])
-                ->filter(fn ($chunk) => str_ends_with($chunk['file'], '.js') || str_ends_with($chunk['file'], '.css'))
+            ->flatMap(fn($entrypoint) => collect($manifest[$entrypoint]['dynamicImports'] ?? [])
+                ->map(fn($import) => $manifest[$import])
+                ->filter(fn($chunk) => str_ends_with($chunk['file'], '.js') || str_ends_with($chunk['file'], '.css'))
                 ->flatMap($f = function ($chunk) use (&$f, $manifest, &$discoveredImports) {
                     return collect([...$chunk['imports'] ?? [], ...$chunk['dynamicImports'] ?? []])
                         ->reject(function ($import) use (&$discoveredImports) {
@@ -477,11 +483,13 @@ class Vite implements Htmlable
                             return ! $discoveredImports[$import] = true;
                         })
                         ->reduce(
-                            fn ($chunks, $import) => $chunks->merge(
+                            fn($chunks, $import) => $chunks->merge(
                                 $f($manifest[$import])
-                            ), collect([$chunk]))
+                            ),
+                            collect([$chunk])
+                        )
                         ->merge(collect($chunk['css'] ?? [])->map(
-                            fn ($css) => collect($manifest)->first(fn ($chunk) => $chunk['file'] === $css) ?? [
+                            fn($css) => collect($manifest)->first(fn($chunk) => $chunk['file'] === $css) ?? [
                                 'file' => $css,
                             ],
                         ));
@@ -498,16 +506,16 @@ class Vite implements Htmlable
                         'fetchpriority' => 'low',
                         'href' => $url,
                     ])->reject(
-                        fn ($value) => in_array($value, [null, false], true)
-                    )->mapWithKeys(fn ($value, $key) => [
+                        fn($value) => in_array($value, [null, false], true)
+                    )->mapWithKeys(fn($value, $key) => [
                         $key = (is_int($key) ? $value : $key) => $value === true ? $key : $value,
                     ])->all();
                 })
-                ->reject(fn ($attributes) => isset($this->preloadedAssets[$attributes['href']])))
+                ->reject(fn($attributes) => isset($this->preloadedAssets[$attributes['href']])))
             ->unique('href')
             ->values()
-            ->pipe(fn ($assets) => with(Js::from($assets), fn ($assets) => match ($this->prefetchStrategy) {
-                'waterfall' => new HtmlString($base.<<<HTML
+            ->pipe(fn($assets) => with(Js::from($assets), fn($assets) => match ($this->prefetchStrategy) {
+                'waterfall' => new HtmlString($base . <<<HTML
 
                     <script{$this->nonceAttribute()}>
                          window.addEventListener('{$this->prefetchEvent}', () => window.setTimeout(() => {
@@ -550,7 +558,7 @@ class Vite implements Htmlable
                         }))
                     </script>
                     HTML),
-                'aggressive' => new HtmlString($base.<<<HTML
+                'aggressive' => new HtmlString($base . <<<HTML
 
                     <script{$this->nonceAttribute()}>
                          window.addEventListener('{$this->prefetchEvent}', () => window.setTimeout(() => {
@@ -574,7 +582,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Make tag for the given chunk.
+     * 为给定的 chunk 制作一个标签。
      *
      * @param  string  $src
      * @param  string  $url
@@ -589,7 +597,8 @@ class Vite implements Htmlable
             && $this->integrityKey !== false
             && ! array_key_exists($this->integrityKey, $chunk ?? [])
             && $this->scriptTagAttributesResolvers === []
-            && $this->styleTagAttributesResolvers === []) {
+            && $this->styleTagAttributesResolvers === []
+        ) {
             return $this->makeTag($url);
         }
 
@@ -607,7 +616,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Make a preload tag for the given chunk.
+     * 为给定的 chunk 制作一个 preload 标签。
      *
      * @param  string  $src
      * @param  string  $url
@@ -617,6 +626,30 @@ class Vite implements Htmlable
      */
     protected function makePreloadTagForChunk($src, $url, $chunk, $manifest)
     {
+        // 添加调试信息
+        var_dump('Source:', $src);
+        var_dump('URL:', $url);
+        var_dump('Chunk:', $chunk);
+        var_dump('Manifest:', $manifest);
+
+        // 检查 `$chunk` 和 `$manifest` 是否包含非数组或对象数据类型
+        foreach ($chunk as $key => $value) {
+            if (is_object($value)) {
+                var_dump('Chunk 键为', $key, '的数据是对象类型', get_class($value));
+            } else {
+                var_dump('Chunk 键为', $key, '的数据类型是', gettype($value));
+            }
+        }
+
+        foreach ($manifest as $key => $value) {
+            if (is_object($value)) {
+                var_dump('Manifest 键为', $key, '的数据是对象类型', get_class($value));
+            } else {
+                var_dump('Manifest 键为', $key, '的数据类型是', gettype($value));
+            }
+        }
+
+        // 处理标签生成
         $attributes = $this->resolvePreloadTagAttributes($src, $url, $chunk, $manifest);
 
         if ($attributes === false) {
@@ -627,11 +660,12 @@ class Vite implements Htmlable
             Collection::make($attributes)->forget('href')->all()
         );
 
-        return '<link '.implode(' ', $this->parseAttributes($attributes)).' />';
+        return '<link ' . implode(' ', $this->parseAttributes($attributes)) . ' />';
     }
 
+
     /**
-     * Resolve the attributes for the chunks generated script tag.
+     * 解析生成的脚本标签的属性。
      *
      * @param  string  $src
      * @param  string  $url
@@ -653,7 +687,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Resolve the attributes for the chunks generated stylesheet tag.
+     * 解析生成的样式表标签的属性。
      *
      * @param  string  $src
      * @param  string  $url
@@ -675,7 +709,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Resolve the attributes for the chunks generated preload tag.
+     * 解析生成的预加载标签的属性。
      *
      * @param  string  $src
      * @param  string  $url
@@ -714,9 +748,9 @@ class Vite implements Htmlable
     }
 
     /**
-     * Generate an appropriate tag for the given URL in HMR mode.
+     * 在 HMR 模式下为给定的 URL 生成适当的标签。
      *
-     * @deprecated Will be removed in a future Laravel version.
+     * @deprecated 将在未来的 Laravel 版本中移除。
      *
      * @param  string  $url
      * @return string
@@ -731,9 +765,9 @@ class Vite implements Htmlable
     }
 
     /**
-     * Generate a script tag for the given URL.
+     * 为给定的 URL 生成脚本标签。
      *
-     * @deprecated Will be removed in a future Laravel version.
+     * @deprecated 将在未来的 Laravel 版本中移除。
      *
      * @param  string  $url
      * @return string
@@ -744,9 +778,9 @@ class Vite implements Htmlable
     }
 
     /**
-     * Generate a stylesheet tag for the given URL in HMR mode.
+     * 在 HMR 模式下为给定的 URL 生成样式表标签。
      *
-     * @deprecated Will be removed in a future Laravel version.
+     * @deprecated 将在未来的 Laravel 版本中移除。
      *
      * @param  string  $url
      * @return string
@@ -757,7 +791,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Generate a script tag with attributes for the given URL.
+     * 为给定的 URL 生成带有属性的脚本标签。
      *
      * @param  string  $url
      * @param  array  $attributes
@@ -771,11 +805,11 @@ class Vite implements Htmlable
             'nonce' => $this->nonce ?? false,
         ], $attributes));
 
-        return '<script '.implode(' ', $attributes).'></script>';
+        return '<script ' . implode(' ', $attributes) . '></script>';
     }
 
     /**
-     * Generate a link tag with attributes for the given URL.
+     * 为给定的 URL 生成带有属性的链接标签。
      *
      * @param  string  $url
      * @param  array  $attributes
@@ -789,11 +823,11 @@ class Vite implements Htmlable
             'nonce' => $this->nonce ?? false,
         ], $attributes));
 
-        return '<link '.implode(' ', $attributes).' />';
+        return '<link ' . implode(' ', $attributes) . ' />';
     }
 
     /**
-     * Determine whether the given path is a CSS file.
+     * 确定给定的路径是否为 CSS 文件。
      *
      * @param  string  $path
      * @return bool
@@ -804,7 +838,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Parse the attributes into key="value" strings.
+     * 将属性解析为 key="value" 字符串。
      *
      * @param  array  $attributes
      * @return array
@@ -812,15 +846,15 @@ class Vite implements Htmlable
     protected function parseAttributes($attributes)
     {
         return Collection::make($attributes)
-            ->reject(fn ($value, $key) => in_array($value, [false, null], true))
-            ->flatMap(fn ($value, $key) => $value === true ? [$key] : [$key => $value])
-            ->map(fn ($value, $key) => is_int($key) ? $value : $key.'="'.$value.'"')
+            ->reject(fn($value, $key) => in_array($value, [false, null], true))
+            ->flatMap(fn($value, $key) => $value === true ? [$key] : [$key => $value])
+            ->map(fn($value, $key) => is_int($key) ? $value : $key . '="' . $value . '"')
             ->values()
             ->all();
     }
 
     /**
-     * Generate React refresh runtime script.
+     * 生成 React 刷新运行时脚本。
      *
      * @return \Illuminate\Support\HtmlString|void
      */
@@ -852,17 +886,17 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the path to a given asset when running in HMR mode.
+     * 获取在 HMR 模式下运行时给定资产的路径。
      *
      * @return string
      */
     protected function hotAsset($asset)
     {
-        return rtrim(file_get_contents($this->hotFile())).'/'.$asset;
+        return rtrim(file_get_contents($this->hotFile())) . '/' . $asset;
     }
 
     /**
-     * Get the URL for an asset.
+     * 获取资产的 URL。
      *
      * @param  string  $asset
      * @param  string|null  $buildDirectory
@@ -878,11 +912,11 @@ class Vite implements Htmlable
 
         $chunk = $this->chunk($this->manifest($buildDirectory), $asset);
 
-        return $this->assetPath($buildDirectory.'/'.$chunk['file']);
+        return $this->assetPath($buildDirectory . '/' . $chunk['file']);
     }
 
     /**
-     * Get the content of a given asset.
+     * 获取给定资产的内容。
      *
      * @param  string  $asset
      * @param  string|null  $buildDirectory
@@ -896,7 +930,7 @@ class Vite implements Htmlable
 
         $chunk = $this->chunk($this->manifest($buildDirectory), $asset);
 
-        $path = public_path($buildDirectory.'/'.$chunk['file']);
+        $path = public_path($buildDirectory . '/' . $chunk['file']);
 
         if (! is_file($path) || ! file_exists($path)) {
             throw new ViteException("Unable to locate file from Vite manifest: {$path}.");
@@ -906,7 +940,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Generate an asset path for the application.
+     * 为应用程序生成资产路径。
      *
      * @param  string  $path
      * @param  bool|null  $secure
@@ -918,7 +952,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the manifest file for the given build directory.
+     * 获取给定构建目录的清单文件。
      *
      * @param  string  $buildDirectory
      * @return array
@@ -931,7 +965,7 @@ class Vite implements Htmlable
 
         if (! isset(static::$manifests[$path])) {
             if (! is_file($path)) {
-                throw new ViteManifestNotFoundException("Vite manifest not found at: $path");
+                throw new ViteManifestNotFoundException("未在以下位置找到Vite清单： $path");
             }
 
             static::$manifests[$path] = json_decode(file_get_contents($path), true);
@@ -941,18 +975,18 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the path to the manifest file for the given build directory.
+     * 获取给定构建目录的清单文件路径。
      *
      * @param  string  $buildDirectory
      * @return string
      */
     protected function manifestPath($buildDirectory)
     {
-        return public_path($buildDirectory.'/'.$this->manifestFilename);
+        return public_path($buildDirectory . '/' . $this->manifestFilename);
     }
 
     /**
-     * Get a unique hash representing the current manifest, or null if there is no manifest.
+     * 获取当前清单的唯一哈希值，如果没有清单则返回 null。
      *
      * @param  string|null  $buildDirectory
      * @return string|null
@@ -973,7 +1007,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the chunk for the given entry point / asset.
+     * 获取给定入口点 / 资产的 chunk。
      *
      * @param  array  $manifest
      * @param  string  $file
@@ -991,7 +1025,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the nonce attribute for the prefetch script tags.
+     * 获取预先获取脚本标签的 nonce 属性。
      *
      * @return \Illuminate\Support\HtmlString
      */
@@ -1001,11 +1035,11 @@ class Vite implements Htmlable
             return new HtmlString('');
         }
 
-        return new HtmlString(' nonce="'.$this->cspNonce().'"');
+        return new HtmlString(' nonce="' . $this->cspNonce() . '"');
     }
 
     /**
-     * Determine if the HMR server is running.
+     * 确定 HMR 服务器是否正在运行。
      *
      * @return bool
      */
@@ -1015,7 +1049,7 @@ class Vite implements Htmlable
     }
 
     /**
-     * Get the Vite tag content as a string of HTML.
+     * 将 Vite 标签内容作为 HTML 字符串获取。
      *
      * @return string
      */

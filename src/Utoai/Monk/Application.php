@@ -17,7 +17,7 @@ use Throwable;
 
 class Application extends FoundationApplication
 {
-    
+
     public const VERSION = '2.3.0';
     // use Bootable;
     /**
@@ -225,6 +225,10 @@ class Application extends FoundationApplication
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
+        // 在调用 load 之前打印提供者数据
+        echo "<br />-------------------------所有已注册的服务提供者-------------------------<br />";
+        var_dump($providers->collapse()->toArray());
+        echo "<br />-----------------------------------------------------------------------<br />";
         (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
     }
@@ -238,9 +242,6 @@ class Application extends FoundationApplication
      */
     public function register($provider, $force = false)
     {
-        // echo "<pre>";
-        // var_export($provider);
-        // echo "</pre>";
 
         try {
             if (is_string($provider) && ! class_exists($provider)) {

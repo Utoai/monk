@@ -30,7 +30,7 @@ class AcornServiceProvider extends ServiceProvider
         \Illuminate\Queue\QueueServiceProvider::class => 'queue',
         \Illuminate\Session\SessionServiceProvider::class => 'session',
         \Illuminate\View\ViewServiceProvider::class => 'view',
-        \Utoai\Monk\Assets\AssetsServiceProvider::class => 'assets',
+        // \Utoai\Monk\Assets\AssetsServiceProvider::class => 'assets',
     ];
 
     /**

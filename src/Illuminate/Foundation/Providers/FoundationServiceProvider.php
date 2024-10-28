@@ -63,6 +63,7 @@ class FoundationServiceProvider extends AggregateServiceProvider
      */
     public function boot()
     {
+        
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../Exceptions/views' => $this->app->resourcePath('views/errors/'),

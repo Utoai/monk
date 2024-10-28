@@ -11,29 +11,34 @@ use Utoai\Monk\Bootloader;
 
 
 
-/**
- * 从清单中获取资产
- */
-function asset(string $asset, ?string $manifest = null): Asset
-{
-    if (! $manifest) {
-        return \app('assets.manifest')->asset($asset);
-    }
+// /**
+//  * 从清单中获取资产
+//  */
+// function asset(string $asset, ?string $manifest = null): Asset
+// {
+//     var_dump($manifest);
+//     if (! $manifest) {
+//         echo "没有";
+//         return \app('assets.manifest')->asset($asset);
+//     }
 
-    return \app('assets')->manifest($manifest)->asset($asset);
-}
+//     echo "<br />----------------从清单中获取资产---------------------------------<br />";
+//     var_dump(\app('assets')->manifest($manifest)->asset($asset));
+//     echo "<br />-----------------------------------------------------------------<br />";
+//     return \app('assets')->manifest($manifest)->asset($asset);
+// }
 
-/**
- * 从清单中获取捆绑包
- */
-function bundle(string $bundle, ?string $manifest = null): Bundle
-{
-    if (! $manifest) {
-        return \app('assets.manifest')->bundle($bundle);
-    }
+// /**
+//  * 从清单中获取捆绑包
+//  */
+// function bundle(string $bundle, ?string $manifest = null): Bundle
+// {
+//     if (! $manifest) {
+//         return \app('assets.manifest')->bundle($bundle);
+//     }
 
-    return \app('assets')->manifest($manifest)->bundle($bundle);
-}
+//     return \app('assets')->manifest($manifest)->bundle($bundle);
+// }
 
 /**
  * 实例化引导加载程序。
