@@ -2,8 +2,7 @@
 
 namespace Utoai\Monk\View;
 
-use Illuminate\Contracts\View\Engine;
-use Illuminate\View\Engines\CompilerEngine;
+use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\View\ViewServiceProvider as ViewServiceProviderBase;
 use Utoai\Monk\View\Composers\Debugger;
@@ -18,7 +17,6 @@ class ViewServiceProvider extends ViewServiceProviderBase
     public function register()
     {
         parent::register();
-        $this->registerMacros();
     }
 
     /**
@@ -28,6 +26,10 @@ class ViewServiceProvider extends ViewServiceProviderBase
      */
     public function boot()
     {
+        $this->attachDirectives();
+        $this->attachComponents();
+        $this->attachComposers();
+
         if ($this->app['config']['view.debug']) {
             $this->attachDebugger();
         }
@@ -43,54 +45,61 @@ class ViewServiceProvider extends ViewServiceProviderBase
         return $this->app['view'];
     }
 
+
     /**
-     * 注册视图宏
+     * Attach 视图指令
      *
      * @return void
      */
-    public function registerMacros()
+    public function attachDirectives()
     {
-        $app = $this->app;
+        $blade = $this->view()->getEngineResolver()->resolve('blade')->getCompiler();
+        $directives = $this->app['config']['view.directives'];
 
-        /**
-         * 获取视图的编译路径
-         *
-         * @return string
-         */
-        View::macro('getCompiled', function () {
-            /** @var string $file path to file */
-            $file = $this->getPath();
-
-            /** @var Engine $engine */
-            $engine = $this->getEngine();
-
-            return ($engine instanceof CompilerEngine)
-                ? $engine->getCompiler()->getCompiledPath($file)
-                : $file;
-        });
-
-        /**
-         * 创建一个加载器供稍后调用的视图
-         *
-         * @return string
-         */
-        View::macro('makeLoader', function () use ($app) {
-            $view = $this->getName();
-            $path = $this->getPath();
-            $id = md5($this->getCompiled());
-            $compiledPath = $app['config']['view.compiled'];
-            $compiledExtension = $app['config']->get('view.compiled_extension', 'php');
-
-            $content = "<?= \\Roots\\view('{$view}', \$data ?? get_defined_vars())->render(); ?>"
-                . "\n<?php /**PATH {$path} ENDPATH**/ ?>";
-
-            if (! file_exists($loader = "{$compiledPath}/{$id}-loader.{$compiledExtension}")) {
-                file_put_contents($loader, $content);
+        foreach ($directives as $name => $handler) {
+            if (! is_callable($handler)) {
+                $handler = $this->app->make($handler);
             }
 
-            return $loader;
-        });
+            $blade->directive($name, $handler);
+        }
     }
+    /**
+     * Attach View 组件
+     *
+     * @return void
+     */
+    public function attachComponents()
+    {
+        $components = $this->app->config['view.components'];
+
+        if (is_array($components) && Arr::isAssoc($components)) {
+            $blade = $this->view()->getEngineResolver()->resolve('blade')->getCompiler();
+
+            foreach ($components as $alias => $view) {
+                $blade->component($view, $alias);
+            }
+        }
+    }
+
+
+    /**
+     * Attach View 作曲家
+     *
+     * @return void
+     */
+    public function attachComposers()
+    {
+        $composers = $this->app->config['view.composers'];
+    
+        if (is_array($composers) && Arr::isAssoc($composers)) {
+            foreach ($composers as $composer) {
+                $this->view()->composer($composer::views(), $composer);
+            }
+        }
+    }
+
+
 
     /**
      * 连接视图调试器

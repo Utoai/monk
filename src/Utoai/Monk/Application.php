@@ -9,6 +9,8 @@ use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use Utoai\Monk\Application\Concerns\Bootable;
+use Utoai\Monk\Configuration\ApplicationBuilder;
 use Utoai\Monk\Exceptions\SkipProviderException;
 use Utoai\Monk\Filesystem\Filesystem;
 use RuntimeException;
@@ -17,9 +19,16 @@ use Throwable;
 
 class Application extends FoundationApplication
 {
+    use Bootable;
 
-    public const VERSION = '2.3.0';
-    // use Bootable;
+    /**
+     * Monk 框架版本。
+     *
+     * @var string
+     */
+    public const VERSION = '0.2.0';
+
+
     /**
      * 开发人员定义的自定义资源路径。
      *
@@ -33,19 +42,51 @@ class Application extends FoundationApplication
      * @param  string|null  $basePath
      * @return void
      */
-    public function __construct($basePath = null, $paths = null)
+    public function __construct($basePath = null)
     {
         if ($basePath) {
             $this->basePath = rtrim($basePath, '\/');
         }
 
-        if ($paths) {
-            $this->usePaths((array) $paths);
-        }
+        $this->useEnvironmentPath($this->environmentPath());
 
         $this->registerGlobalHelpers();
 
         parent::__construct($basePath);
+    }
+
+
+    /**
+     * 开始配置新的 Laravel 应用程序实例。
+     *
+     * @param  string|null  $basePath
+     * @return \Utoai\Monk\Configuration\ApplicationBuilder
+     */
+    public static function configure(?string $basePath = null)
+    {
+        $basePath = match (true) {
+            is_string($basePath) => $basePath,
+            default => ApplicationBuilder::inferBasePath(),
+        };
+
+        return (new ApplicationBuilder(new static($basePath)))
+            ->withPaths()
+            ->withKernels()
+            ->withEvents()
+            ->withCommands()
+            ->withProviders()
+            ->withMiddleware()
+            ->withExceptions();
+    }
+
+    /**
+     * 获取环境文件路径。
+     */
+    public function environmentPath(): string
+    {
+        return is_file($envPath = (new Filesystem)->closest($this->basePath(), '.env') ?? '')
+            ? dirname($envPath)
+            : $this->basePath();
     }
 
     /**
@@ -75,6 +116,7 @@ class Application extends FoundationApplication
             'database' => 'databasePath',
             'resources' => 'resourcePath',
             'bootstrap' => 'bootstrapPath',
+            'environment' => 'environmentPath',
         ];
 
         foreach ($paths as $pathType => $path) {
@@ -106,24 +148,28 @@ class Application extends FoundationApplication
         $this->instance('path.public', $this->publicPath());
         $this->instance('path.resources', $this->resourcePath());
         $this->instance('path.storage', $this->storagePath());
-        $this->instance('path.bootstrap', $this->bootstrapPath());
 
-        $this->useLangPath(value(function () {
-            return is_dir($directory = $this->resourcePath('lang'))
+        $this->useBootstrapPath(value(function () {
+            return is_dir($directory = $this->basePath('.laravel'))
                 ? $directory
-                : $this->basePath('lang');
+                : $this->bootstrapPath();
         }));
+
+        $this->useLangPath(value(
+            fn() => is_dir($directory = $this->resourcePath('lang'))
+                ? $directory
+                : $this->basePath('lang')
+        ));
     }
 
     /**
      * 获取引导目录的路径。
      *
-     * @param  string  $path  Optionally, a path to append to the bootstrap path
+     * @param  string  $path  （可选）要附加到引导路径的路径
      * @return string
      */
     public function bootstrapPath($path = '')
     {
-        // echo '-----引导目录'. $path .'路径<br /><br />';
         return $this->joinPaths($this->bootstrapPath ?: $this->storagePath('framework'), $path);
     }
 
@@ -135,7 +181,6 @@ class Application extends FoundationApplication
      */
     public function resourcePath($path = '')
     {
-        // echo '-----资源目录'. $path .'路径<br /><br />';
         return $this->joinPaths($this->resourcePath ?: $this->basePath('resources'), $path);
     }
 
@@ -225,10 +270,10 @@ class Application extends FoundationApplication
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
 
-        // 在调用 load 之前打印提供者数据
         echo "<br />-------------------------所有已注册的服务提供者-------------------------<br />";
         var_dump($providers->collapse()->toArray());
         echo "<br />-----------------------------------------------------------------------<br />";
+
         (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
     }

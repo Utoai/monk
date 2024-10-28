@@ -36,13 +36,13 @@ return [
     | 当您的应用程序处于调试模式时，详细的错误消息
     | 堆栈跟踪将显示在您的程序中发生的每个错误上
     | 应用。如果禁用，则会显示一个简单的通用错误页面。
-    |
+    |   false true
     */
     'debug' => true,
 
     /*
     |--------------------------------------------------------------------------
-    | 申请网址
+    | Application URL
     |--------------------------------------------------------------------------
     |
     | 控制台使用此 URL 在使用时正确生成 URL
@@ -51,9 +51,12 @@ return [
     |
     */
 
-    'url' => env('APP_URL', __TYPECHO_ROOT_DIR__),
-    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),
-    'asset_url' => env('ASSET_URL'),
+    
+    'url' => env('APP_URL', 'http://localhost'),    //  应该用不到,待排查
+    
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),    //  应该用不到,待排查
+    
+    'asset_url' => env('ASSET_URL', 'http://type.w.com/usr/themes/FounBox/public'),
 
     /*
     |--------------------------------------------------------------------------

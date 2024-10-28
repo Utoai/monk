@@ -18,7 +18,7 @@ trait Arrayable
     public function toArray()
     {
         return collect((new ReflectionClass(static::class))->getMethods(ReflectionMethod::IS_PUBLIC))
-            ->reject(fn($method) => $this->shouldIgnore($method->name) || $method->isStatic())
+            ->reject(fn ($method) => $this->shouldIgnore($method->name) || $method->isStatic())
             ->mapWithKeys(function ($method) {
                 try {
                     $data = $this->{$method->name}();
@@ -30,16 +30,5 @@ trait Arrayable
             })
             ->filter()
             ->all();
-    }
-
-    /**
-     * 判断是否应忽略某个方法。
-     *
-     * @param  string  $method
-     * @return bool
-     */
-    protected function shouldIgnore($method)
-    {
-        return in_array($method, ['__construct', '__destruct', '__call', '__callStatic', '__get', '__set', '__isset', '__unset', '__sleep', '__wakeup', '__toString', '__invoke', '__set_state', '__clone', '__debugInfo']);
     }
 }

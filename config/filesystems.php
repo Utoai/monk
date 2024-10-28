@@ -71,6 +71,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('build') => base_path('usr/themes/FounBox/public/build'),
     ],
 
 ];
