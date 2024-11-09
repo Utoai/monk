@@ -2,7 +2,9 @@
 
 namespace Utoai\Monk\Providers;
 
+use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Support\ServiceProvider;
+use Utoai\Monk\Filesystem\Filesystem;
 
 class AcornServiceProvider extends ServiceProvider
 {
@@ -52,6 +54,7 @@ class AcornServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->registerPublishables();
+            $this->registerPostInitEvent();
         }
     }
 
@@ -99,5 +102,26 @@ class AcornServiceProvider extends ServiceProvider
         );
 
         return array_unique(array_merge($this->configs, array_values($configs)));
+    }
+    /**
+     * 运行 acorn：init 后删除 zeroconf 存储目录。
+     *
+     * @return void
+     */
+    protected function registerPostInitEvent()
+    {
+        $this->app->make('events')->listen(function (CommandFinished $event) {
+            if ($event->command !== 'acorn:init') {
+                return;
+            }
+
+            if (! is_dir(base_path('storage'))) {
+                return;
+            }
+
+            $files = new Filesystem;
+
+            $files->deleteDirectory(__TYPECHO_ROOT_DIR__, '/usr/cache/monk');
+        });
     }
 }

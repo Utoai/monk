@@ -91,6 +91,7 @@ class ApiInstallCommand extends Command
      */
     protected function uncommentApiRoutesFile()
     {
+        var_dump('取消注释 api routes 文件');
         $appBootstrapPath = $this->laravel->bootstrapPath('app.php');
 
         $content = file_get_contents($appBootstrapPath);

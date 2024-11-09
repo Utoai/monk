@@ -9,6 +9,7 @@ use Illuminate\Foundation\PackageManifest as FoundationPackageManifest;
 use Illuminate\Foundation\ProviderRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Utoai\Monk\Application\Concerns\Bootable;
 use Utoai\Monk\Configuration\ApplicationBuilder;
 use Utoai\Monk\Exceptions\SkipProviderException;
@@ -48,6 +49,7 @@ class Application extends FoundationApplication
             $this->basePath = rtrim($basePath, '\/');
         }
 
+
         $this->useEnvironmentPath($this->environmentPath());
 
         $this->registerGlobalHelpers();
@@ -64,6 +66,7 @@ class Application extends FoundationApplication
      */
     public static function configure(?string $basePath = null)
     {
+
         $basePath = match (true) {
             is_string($basePath) => $basePath,
             default => ApplicationBuilder::inferBasePath(),
@@ -218,6 +221,7 @@ class Application extends FoundationApplication
      */
     protected function registerPackageManifest()
     {
+
         $this->alias(FoundationPackageManifest::class, PackageManifest::class);
     }
 
@@ -266,13 +270,11 @@ class Application extends FoundationApplication
     {
         $providers = Collection::make($this->make('config')->get('app.providers'))
             ->filter(fn($provider) => class_exists($provider))
-            ->partition(fn($provider) => str_starts_with($provider, 'Illuminate\\') || str_starts_with($provider, 'Roots\\'));
+            ->partition(fn($provider) => str_starts_with($provider, 'Illuminate\\') || str_starts_with($provider, 'Utoai\\'));
+
+
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
-
-        echo "<br />-------------------------所有已注册的服务提供者-------------------------<br />";
-        var_dump($providers->collapse()->toArray());
-        echo "<br />-----------------------------------------------------------------------<br />";
 
         (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
             ->load($providers->collapse()->toArray());
@@ -295,6 +297,7 @@ class Application extends FoundationApplication
 
             return parent::register($provider, $force);
         } catch (Throwable $e) {
+            var_dump("服务提供商注册失败: ", $provider, "错误信息: ", $e->getMessage());
             return $this->skipProvider($provider, $e);
         }
     }
@@ -348,6 +351,7 @@ class Application extends FoundationApplication
 
         $composer = json_decode(file_get_contents($composerPath = $this->getAppComposer()), true);
 
+
         foreach ((array) data_get($composer, 'autoload.psr-4') as $namespace => $path) {
             foreach ((array) $path as $pathChoice) {
                 if (realpath($this->path()) === realpath(dirname($composerPath) . DIRECTORY_SEPARATOR . $pathChoice)) {
@@ -370,7 +374,16 @@ class Application extends FoundationApplication
      */
     protected function getAppComposer(): string
     {
-        return (new Filesystem)->closest($this->path(), 'composer.json') ?? $this->basePath('composer.json');
+        // echo "<br>----------------</b><br>";
+        // var_dump(get_plugin_file_path(), 'composer.json');
+        // var_dump($this->path(), 'composer.json');
+        // echo "<br>----------------</b><br>";
+        // var_dump(get_plugin_file_path('composer.json'));
+        // var_dump($this->basePath('composer.json'));
+        // echo "<br>----------------</b><br>";
+
+
+        return (new Filesystem)->closest(get_plugin_file_path(), 'composer.json') ?? get_plugin_file_path('composer.json');
     }
 
     /**

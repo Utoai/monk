@@ -44,8 +44,34 @@ return [
     | 将显示两者。
     | true/false
     */
-    'debug' => true,
+    'debug' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | 查看命名空间
+    |--------------------------------------------------------------------------
+    |
+    | Blade 有一个未充分利用的功能，允许开发人员添加
+    | 可能包含命名冲突的视图的补充视图路径。
+    | 这些路径以命名空间为前缀，以解决冲突。
+    | 用例可能包括插件文件夹中的视图。
+    |
+    */
+
+    'namespaces' => [
+        /**
+         * 插件视图-命名空间
+         * 
+         * 示例
+         *  @include('MyPlugin::some.view.or.partial.here')
+         *  'MyPlugin' => 插件目录 . '/path/to/plugin/resources/views'
+         * @component('MyPlugin::some.view')
+         * @component('MyPlugin::some.component')
+         * @component('MyPlugin::some.component.with.data')
+         * @component('MyPlugin::some.partial')
+         * @component('MyPlugin::some.partial.with.data')
+         */
+    ],
 
     /*
     |--------------------------------------------------------------------------

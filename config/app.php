@@ -38,7 +38,7 @@ return [
     | 应用。如果禁用，则会显示一个简单的通用错误页面。
     |   false true
     */
-    'debug' => true,
+    'debug' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -56,7 +56,7 @@ return [
     
     'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),    //  应该用不到,待排查
     
-    'asset_url' => env('ASSET_URL', 'http://type.w.com/usr/themes/FounBox/public'),
+    'asset_url' => env('ASSET_URL', 'https://q.w.com/usr/themes/classic-22/public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -163,7 +163,7 @@ return [
         // 套餐服务提供商...
     ])->merge([
         // 应用服务提供商...
-        App\Providers\ThemeServiceProvider::class,
+        // App\Providers\ThemeServiceProvider::class,
     ])->merge([
         // 添加的服务提供商（不要删除此行）...
     ])->toArray(),

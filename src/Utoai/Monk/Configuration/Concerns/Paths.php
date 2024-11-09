@@ -34,14 +34,31 @@ trait Paths
     }
 
     /**
-     * 注册并配置应用程序的路径
+     * 注册并配置应用程序的路径。
      *
      * @return $this
      */
-    public function withPaths(?string $app = null, ?string $config = null, ?string $storage = null, ?string $resources = null, ?string $public = null, ?string $bootstrap = null, ?string $lang = null, ?string $database = null)
-    {
+    public function withPaths(
+        ?string $app = null,
+        ?string $config = null,
+        ?string $storage = null,
+        ?string $resources = null,
+        ?string $public = null,
+        ?string $bootstrap = null,
+        ?string $lang = null,
+        ?string $database = null
+    ) {
         $this->app->usePaths(
-            array_filter(compact('app', 'config', 'storage', 'resources', 'public', 'bootstrap', 'lang', 'database')) + $this->defaultPaths()
+            array_filter(compact(
+                'app',
+                'config',
+                'storage',
+                'resources',
+                'public',
+                'bootstrap',
+                'lang',
+                'database'
+            )) + $this->defaultPaths()
         );
 
         return $this;
@@ -96,8 +113,8 @@ trait Paths
         ];
 
         return collect($searchPaths)
-            ->filter(fn ($path) => (is_string($path) && is_dir($path)))
-            ->whenEmpty(fn ($paths) => $paths->add($this->fallbackPath($path)))
+            ->filter(fn($path) => (is_string($path) && is_dir($path)))
+            ->whenEmpty(fn($paths) => $paths->add($this->fallbackPath($path)))
             ->unique()
             ->first();
     }
@@ -120,12 +137,14 @@ trait Paths
         $files = new Filesystem;
         $path = Str::finish(__TYPECHO_ROOT_DIR__, '/usr/cache/monk');
 
-        foreach ([
-            'framework/cache/data',
-            'framework/views',
-            'framework/sessions',
-            'logs',
-        ] as $directory) {
+        foreach (
+            [
+                'framework/cache/data',
+                'framework/views',
+                'framework/sessions',
+                'logs',
+            ] as $directory
+        ) {
             $files->ensureDirectoryExists("{$path}/{$directory}", 0755, true);
         }
 

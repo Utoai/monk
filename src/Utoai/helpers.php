@@ -4,9 +4,22 @@ namespace Utoai;
 
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use Utoai\Monk\Assets\Contracts\Asset;
 use Utoai\Monk\Bootloader;
 
 
+
+/**
+ * 从 manifest 获取资产
+ */
+// function asset(string $asset, ?string $manifest = null): Asset
+// {
+//     if (! $manifest) {
+//         return \app('assets.manifest')->asset($asset);
+//     }
+
+//     return \app('assets')->manifest($manifest)->asset($asset);
+// }
 
 /**
  * 实例化引导加载程序。
@@ -16,6 +29,29 @@ function bootloader(?ApplicationContract $app = null): Bootloader
     $bootloader = Bootloader::getInstance($app);
     return $bootloader;
 }
+
+
+/**
+ * 将单个回调绑定到多个过滤器
+ *
+ * @param  iterable $filters  List of filters
+ * @param  callable $callback
+ * @param  integer  $priority
+ * @param  integer  $args
+ * @return void
+ */
+// function add_filters(iterable $filters, $callback, $priority = 10, $args = 2)
+// {
+//     $count = count($filters);
+//     // var_dump($filters, $callback, $priority, $args); // 输出所有参数
+//     array_map(
+//         '\add_filter',
+//         (array) $filters,
+//         array_fill(0, $count, $callback),
+//         array_fill(0, $count, $priority),
+//         array_fill(0, $count, $args)
+//     );
+// }
 
 /**
  * 获取给定视图或文件的评估视图内容。

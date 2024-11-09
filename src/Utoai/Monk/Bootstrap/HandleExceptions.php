@@ -92,7 +92,7 @@ class HandleExceptions extends FoundationHandleExceptionsBootstrapper
      */
     protected function isDebug()
     {
-        return static::$app->config->get('app.debug', __TYPECHO_DEBUG__);
+        return static::$app->config->get('app.debug');
     }
 
 

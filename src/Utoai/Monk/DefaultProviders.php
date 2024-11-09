@@ -12,6 +12,7 @@ class DefaultProviders extends DefaultProvidersBase
      * Monk 提供商。
      */
     protected array $acornProviders = [
+        // \Utoai\Monk\Assets\AssetsServiceProvider::class,
         \Utoai\Monk\Filesystem\FilesystemServiceProvider::class,
         \Utoai\Monk\Providers\AcornServiceProvider::class,
         \Utoai\Monk\Providers\QueueServiceProvider::class,

@@ -1,0 +1,17 @@
+<?php
+
+namespace DummyNamespace;
+
+use Utoai\Monk\View\Composer;
+
+class DummyClass extends Composer
+{
+    /**
+     * List of views served by this composer.
+     *
+     * @var string[]
+     */
+    protected static $views = [
+        DummyViews
+    ];
+}
