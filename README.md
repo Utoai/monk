@@ -8,3 +8,27 @@
 
 ## Monk 利用 Laravel 生态系统
  Typecho 主题的 Laravel Blade模板，Laravel 组件
+
+## 使用方法
+- 主题/插件
+```
+composer i
+```
+- 启动程序
+```
+Application::configure($basePath = null)
+    ->withPaths(
+        // 自定义路径
+        '..\root\app',           // 'app' 路径
+        '..\root\config',         // 'config' 路径
+    )
+    ->withProviders([
+        // 自定义服务
+        App\Providers\ThemeServiceProvider::class,
+    ])
+    ->withRouting(
+        // 添加自定义路由，无需使用typecho添加。
+        // web: 'D:\pwa\www\w.w\wp-content\themes\root\routes\web.php',
+    )
+    ->boot();
+```
